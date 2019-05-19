@@ -10,7 +10,6 @@ import (
 func TestCond() {
 	wg := new(sync.WaitGroup)
 
-
 	cond := new(sync.Cond)
 	cond.L = new(sync.Mutex)
 
@@ -36,19 +35,21 @@ func TestCond() {
 		}(i)
 	}
 
-	//wg.Add(1)
-	//go func() {
-	//	defer runtime.Gosched()
-	//	defer wg.Done()
-	//
-	//	for i := 0; i < 3; i++ {
-	//		fmt.Println("channel value print : ", <-c)
-	//	}
-	//}()
+	wg2 := new(sync.WaitGroup)
+	wg2.Add(1)
+	go func() {
+		defer runtime.Gosched()
+		defer wg2.Done()
 
-	for i := 0; i < 3; i++ {
-		fmt.Println("channel value print : ", <-c)
-	}
+		for i := 0; i < 3; i++ {
+			fmt.Println("channel value print : ", <-c)
+		}
+	}()
+	wg2.Wait()
+
+	//for i := 0; i < 3; i++ {
+	//	fmt.Println("channel value print : ", <-c)
+	//}
 
 	for i := 0; i < 3; i++ {
 		cond.L.Lock()
